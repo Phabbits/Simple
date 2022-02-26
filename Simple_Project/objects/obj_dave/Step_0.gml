@@ -3,12 +3,16 @@
 // Check if solid ground will be under the character at the end of this step
 // Have to add acceleration onto vspeed, because this is the amount it will be
 // increased by gravity potentially
-if not place_free(x + hspeed, y + vspeed + acceleration){
+if not place_free(x + hspeed, y + vspeed + 1){
 	// Even if the character was moving at a greater speed like
 	// 3 pixels per second, this would still stop the character perfectly
 	// on top the solid object because once the vspeed is reduced to 0
 	// the player would again start dropping till the solid object
 	// was less than one acceleration magnitude away
+	while not place_free(x, y + vspeed){
+		vspeed = (abs(vspeed) - 0.5)*sign(vspeed)
+	}
+	y += vspeed
 	vspeed = 0
 	
 	// Stick the landings, so when jumping on a platform the character
@@ -55,8 +59,20 @@ else{
 	friction = 0
 }
 
+// Top collisions
+if not place_free(x + hspeed, y + vspeed - 1){
+	while not place_free(x, y + vspeed){
+		vspeed = (abs(vspeed) - 0.5)*sign(vspeed)
+	}
+	y += vspeed
+	vspeed = 0
+}
 // Side collisions
 if not place_free(x + hspeed, y){
+	while not place_free(x + hspeed, y){
+		hspeed = (abs(hspeed) - 0.5)*sign(hspeed)
+	}
+	x += hspeed
 	hspeed = 0
 	x = round(x)
 }
